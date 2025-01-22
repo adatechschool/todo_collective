@@ -8,3 +8,7 @@
   border-radius: 5px;
   padding: 3px;
 }
+
+#list-tasks{
+  list-style: none;
+}

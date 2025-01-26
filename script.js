@@ -1,4 +1,4 @@
-const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 const userInput = document.querySelector('#usersInput');
 const button = document.querySelector('#submit-btn');
 const listTasks = document.getElementById('list-tasks');
@@ -8,7 +8,7 @@ button.addEventListener('click', (e) => {
   e.preventDefault();
   let task = {
     text: userInput.value,
-    completed: false,
+    done: false,
     id: Date.now(),
   };
   addTask(task);
@@ -38,30 +38,32 @@ function displayTask(task) {
 
   let span = document.createElement('span');
   span.textContent = task.text;
+  span.contentEditable = true;
   li.appendChild(span);
-  
+
   const trash = document.createElement('img');
   trash.src = 'trash.svg';
   trash.id = 'trash';
   li.appendChild(trash);
   trash.addEventListener('click', () => {
-    //deleteAllTasks();
+    deleteTask(task.id);
     li.remove();
   });
   checkBox.addEventListener('change', (e) => {
     e.preventDefault();
+    console.log(toggleCompletedTask(task.id));
+    console.log('clicked');
     if (checkBox.checked) {
-      task.completed = true;
+      //task.done = true;
       li.style.textDecoration = 'line-through';
     } else {
       li.style.textDecoration = 'none';
     }
-    toggleCompletedTask(task.id);
-    
   });
+
   listTasks.appendChild(li);
-  if(tasks.length>0){
-     listTasks.style.border= "1px solid #eee";
+  if (tasks.length > 0) {
+    listTasks.style.border = '1px solid #eee';
   }
 }
 
@@ -73,10 +75,17 @@ const addTask = (task) => {
 
 function toggleCompletedTask(taskId) {
   const taskToModify = tasks.find((task) => task.id === taskId);
-  if(taskToModify)
-    {
-        console.log(taskToModify)
-    };
+  if (taskToModify) {
+    taskToModify.done = !taskToModify.done;
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    return taskToModify;
+  } else {
+    return "Je n'ai rien trouvé";
+  }
+}
+function deleteTask(taskId) {
+  tasks = tasks.filter((task) => task.id != taskId);
+  localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
 const deleteAllTasks = () => {
@@ -84,3 +93,5 @@ const deleteAllTasks = () => {
 };
 
 loadTask();
+
+//ToDo ajouter une méthode permettant de modifier le texte d‘une tâche
